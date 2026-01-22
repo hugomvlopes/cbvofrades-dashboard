@@ -1,0 +1,211 @@
+<div class="dashboard-operacional">
+    <div class="dash-header">
+        <div class="header-left">
+            <span class="pulse-red"></span>
+            <h2>MONITORIZAÇÃO OPERACIONAL - OLIVEIRA DE FRADES</h2>
+        </div>
+        <div class="header-right">
+            <span id="clock">00:00:00</span>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-label">TOTAL NO CONCELHO (Desde 21 Jan)</span>
+            <div class="stat-row">
+                <span id="total-ocorrencias" class="stat-value">--</span>
+                <div id="natureza-breakdown" class="breakdown-list"></div>
+            </div>
+        </div>
+
+        <div class="stat-card warning-card">
+            <span class="stat-label">AVISOS IPMA ATIVOS AGORA (VISEU)</span>
+            <div id="viseu-alerts-container">
+                <span class="loading-text">A filtrar avisos em vigor...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="ticker-wrapper">
+        <div class="stat-card ticker-card">
+            <span class="stat-label">ALERTAS ATIVOS (REGIÃO VISEU DÃO LAFÕES)</span>
+            <div id="ocorrencias-ticker">
+                <span class="loading-text">🚒 A carregar dados...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="camera-grid">
+        <div class="cam-container"><img id="cam1" src="" alt="Ladário"><div class="cam-label">Ladário</div></div>
+        <div class="cam-container"><img id="cam2" src="" alt="Paranho Arca"><div class="cam-label">Paranho Arca</div></div>
+        <div class="cam-container"><img id="cam3" src="" alt="Gravia"><div class="cam-label">Gravia</div></div>
+        <div class="cam-container"><img id="cam4" src="" alt="Adsamo"><div class="cam-label">Adsamo</div></div>
+    </div>
+
+    <div class="weather-row">
+        <div class="radar-box">
+            <div class="sub-title">📡 RADAR IPMA (AROUCA / P. GRALHEIRO)</div>
+            <img id="radar-ipma" src="https://www.ipma.pt/resources.www/transf/radar/LIS_MAX.gif" alt="Radar IPMA">
+        </div>
+        <div class="windy-box">
+            <div class="sub-title">🌬️ DINÂMICA DE VENTOS E NEVE</div>
+            <iframe width="100%" height="350" src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=°C&metricWind=km/h&zoom=9&overlay=wind&product=ecmwf&level=surface&lat=40.748&lon=-8.053&detailLat=40.732&detailLon=-8.253&marker=true" frameborder="0"></iframe>
+        </div>
+    </div>
+</div>
+
+<style>
+.dashboard-operacional { background: #0a0a0a; padding: 20px; border-radius: 12px; font-family: 'Inter', sans-serif; color: #fff; border: 1px solid #222; }
+
+/* FIX ALINHAMENTO BOLA */
+.dash-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 12px; margin-bottom: 15px; }
+.header-left { display: flex; align-items: center; }
+
+.pulse-red { 
+    width: 12px; 
+    height: 12px; 
+    background: #ff0000; 
+    border-radius: 50% !important; 
+    margin-right: 12px; 
+    display: inline-block; 
+    flex-shrink: 0; /* Impede a deformação */
+    box-shadow: 0 0 10px #ff0000; 
+    animation: pulse-animation 1.5s infinite; 
+}
+
+@keyframes pulse-animation { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); } }
+
+.dash-header h2 { font-size: 0.9rem; margin: 0; color: #eee; font-weight: 700; letter-spacing: 1px; }
+#clock { font-family: 'Courier New', monospace; font-size: 1.1rem; color: #00d4ff; font-weight: bold; }
+
+/* AJUSTE STATS PARA OCUPAR MENOS ESPAÇO VERTICAL */
+.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 12px; }
+.stat-card { background: #151515; padding: 15px; border-radius: 8px; border: 1px solid #222; }
+.stat-label { font-size: 0.7rem; color: #777; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; display: block; }
+
+.stat-row { 
+    display: flex; 
+    align-items: center; 
+    justify-content: flex-start; 
+    gap: 20px; /* Espaço entre o número e a lista */
+}
+
+.stat-value { font-size: 2.5rem; color: #ff4d4d; font-weight: 900; line-height: 1; }
+
+.breakdown-list { 
+    flex-grow: 1; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 4px; 
+    border-left: 1px solid #333; 
+    padding-left: 15px; 
+}
+
+.breakdown-item { font-size: 0.7rem; color: #bbb; display: flex; justify-content: space-between; gap: 10px; }
+.breakdown-count { color: #00d4ff; font-weight: bold; }
+
+/* RESTANTE DOS ESTILOS */
+#viseu-alerts-container { display: flex; flex-direction: column; gap: 5px; }
+.ipma-badge { padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; display: flex; justify-content: space-between; }
+.level-yellow { background: #ffcc00; color: #000; }
+.level-orange { background: #ff6600; color: #fff; }
+.level-red { background: #cc0000; color: #fff; animation: blinker 1.5s linear infinite; }
+@keyframes blinker { 50% { opacity: 0.5; } }
+.no-alerts { color: #44ff44; font-size: 0.8rem; font-weight: 800; }
+#ocorrencias-ticker { height: 30px; display: flex; align-items: center; color: #ffffff; font-weight: 600; font-size: 14px; }
+.camera-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
+.cam-container { position: relative; background: #000; border-radius: 4px; overflow: hidden; border: 1px solid #222; }
+.cam-container img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+.cam-label { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.8); padding: 4px; font-size: 0.65rem; color: #00d4ff; text-align: center; font-weight: bold; }
+.weather-row { display: grid; grid-template-columns: 1fr 1.5fr; gap: 15px; }
+.sub-title { font-size: 0.75rem; margin-bottom: 8px; color: #555; font-weight: bold; text-transform: uppercase; }
+.radar-box img { width: 100%; border-radius: 6px; height: 350px; object-fit: contain; background: #000; border: 1px solid #222; }
+.windy-box iframe { border-radius: 8px; border: 1px solid #222; }
+@media (max-width: 800px) { .stats-grid, .camera-grid, .weather-row { grid-template-columns: 1fr; } .radar-box img { height: 250px; } .stat-row { flex-direction: column; align-items: flex-start; } .breakdown-list { border-left: none; padding-left: 0; border-top: 1px solid #333; padding-top: 10px; width: 100%; } }
+</style>
+
+<script>
+// Mantive a tua lógica de script que já estava a funcionar bem
+async function atualizarIPMA() {
+    try {
+        const url = "https://corsproxy.io/?https://api.ipma.pt/open-data/forecast/warnings/warnings_www.json";
+        const res = await fetch(url);
+        const data = await res.json();
+        const agora = new Date();
+
+        const ativos = data.filter(item => {
+            const inicio = new Date(item.startTime);
+            const fim = new Date(item.endTime);
+            const level = item.awarenessLevelID.toLowerCase();
+            return item.idAreaAviso === "VIS" && agora >= inicio && agora <= fim && !level.includes("green") && !level.includes("no_warning");
+        });
+
+        const container = document.getElementById("viseu-alerts-container");
+        if (ativos.length === 0) {
+            container.innerHTML = '<span class="no-alerts">✅ SEM AVISOS ATIVOS NESTE MOMENTO</span>';
+            return;
+        }
+
+        let html = "";
+        ativos.forEach(alert => {
+            const level = alert.awarenessLevelID.toLowerCase();
+            let levelClass = "level-yellow";
+            if(level.includes("orange")) levelClass = "level-orange";
+            if(level.includes("red")) levelClass = "level-red";
+            const labelNivel = alert.awarenessLevelID.includes('_') ? alert.awarenessLevelID.split('_')[1] : "AVISO";
+            html += `<div class="ipma-badge ${levelClass}"><span>${alert.awarenessTypeName}</span><span>${labelNivel}</span></div>`;
+        });
+        container.innerHTML = html;
+    } catch (e) { console.error("Erro IPMA:", e); }
+}
+
+async function atualizarOcorrencias() {
+    try {
+        const hRes = await fetch("https://corsproxy.io/?https://api.fogos.pt/v2/incidents/search?all=1&after=2026-01-21&concelho=Oliveira%20De%20Frades&limit=1000");
+        const hJson = await hRes.json();
+        const hIncidentes = Array.isArray(hJson) ? hJson : hJson.data || [];
+        document.getElementById('total-ocorrencias').innerText = hIncidentes.length;
+
+        const contagem = {};
+        hIncidentes.forEach(i => { contagem[i.natureza || "Outros"] = (contagem[i.natureza || "Outros"] || 0) + 1; });
+        const ordenado = Object.entries(contagem).sort((a,b) => b[1] - a[1]).slice(0, 3);
+        let hHtml = "";
+        ordenado.forEach(([tipo, qtd]) => { hHtml += `<div class="breakdown-item"><span>${tipo}</span><span class="breakdown-count">${qtd}</span></div>`; });
+        document.getElementById('natureza-breakdown').innerHTML = hHtml;
+
+        const aRes = await fetch("https://corsproxy.io/?https://api.fogos.pt/v2/incidents/active?all=1&subRegion=Viseu%20D%C3%A3o%20Laf%C3%B5es");
+        const aJson = await aRes.json();
+        const aIncidentes = Array.isArray(aJson) ? aJson : aJson.data || [];
+        if (aIncidentes.length === 0) {
+            document.getElementById("ocorrencias-ticker").innerHTML = "✅ SEM OCORRÊNCIAS REGIONAIS ATIVAS";
+            document.getElementById("ocorrencias-ticker").style.color = "#44ff44";
+        } else {
+            let txt = "";
+            aIncidentes.forEach(i => { txt += `🚨 ${i.natureza.toUpperCase()} : ${i.location.toUpperCase()} &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; `; });
+            document.getElementById("ocorrencias-ticker").innerHTML = `<marquee scrollamount="8">${txt}</marquee>`;
+            document.getElementById("ocorrencias-ticker").style.color = "#ffffff";
+        }
+    } catch (e) { }
+}
+
+function refreshMedia() {
+    const t = new Date().getTime();
+    const cams = ["15_1", "16_1", "12_1", "17_1"];
+    for(let i=1; i<=4; i++) {
+        let el = document.getElementById('cam'+i);
+        if(el) el.src = `https://vigia.cimvdl.pt/assets/img/vigia/cache/camera_${cams[i-1]}.jpg?t=${t}`;
+    }
+}
+
+function updateClock() {
+    const el = document.getElementById('clock');
+    if(el) el.innerText = new Date().toLocaleTimeString('pt-PT');
+}
+
+atualizarIPMA();
+atualizarOcorrencias();
+setInterval(atualizarIPMA, 600000); 
+setInterval(atualizarOcorrencias, 300000); 
+setInterval(refreshMedia, 1500); 
+setInterval(updateClock, 1000);
+</script>
