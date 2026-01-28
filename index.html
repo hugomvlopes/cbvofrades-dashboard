@@ -1,13 +1,20 @@
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-/* Reset para garantir que não há bordas brancas no Elementor ou Navegador */
-body, html { 
+/* ===== FIX GERAL (Elementor safe) ===== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { 
     margin: 0 !important; 
     padding: 0 !important; 
     background: #050505; 
-    overflow-x: hidden;
+    overflow-x: hidden !important;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Ajuda extra no Elementor (evita cortes por wrappers) */
+.elementor, .elementor-section, .elementor-container, .elementor-column, .elementor-widget-wrap {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@400;700;900&display=swap');
@@ -19,54 +26,58 @@ body, html {
     padding: 25px; 
     border-radius: 0;
     border: none;
-    width: 100vw;
+
+    /* ✅ TROCA CRÍTICA: 100vw -> 100% */
+    width: 100% !important;
+    max-width: 100% !important;
+
     min-height: 100vh;
     margin: 0;
     line-height: 1.4; 
-    box-sizing: border-box;
+    overflow-x: hidden; /* corta qualquer "vazamento" interno */
 }
 
+/* --- header --- */
 .bvofr-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #111; padding-bottom: 20px; margin-bottom: 25px; }
-.bvofr-title-group { display: flex; align-items: center; gap: 15px; }
-.bvofr-header h1 { margin: 0; font-size: 1.1rem; font-weight: 900; color: #fff; letter-spacing: 1px; }
+.bvofr-title-group { display: flex; align-items: center; gap: 15px; min-width: 0; }
+.bvofr-header h1 { margin: 0; font-size: 1.1rem; font-weight: 900; color: #fff; letter-spacing: 1px; min-width: 0; }
 .bvofr-header h1 small { display: block; color: #ff3e3e; font-size: 0.75rem; }
 #bvofr-clock { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; color: #ff0000; }
 
 .status-pulse { width: 12px; height: 12px; background: #ff3e3e; border-radius: 50%; box-shadow: 0 0 10px #ff3e3e; animation: bvofrPulse 2s infinite; }
 @keyframes bvofrPulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-.bvofr-metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
-.bvofr-metric-card { background: #0d0d0d; border: 1px solid #1a1a1a; padding: 15px; border-radius: 12px; min-height: 110px; }
+/* ✅ Grid “anti-corte” */
+.bvofr-metrics-grid { 
+    display: grid; 
+    grid-template-columns: repeat(3, minmax(0, 1fr)); 
+    gap: 15px; 
+    margin-bottom: 20px; 
+}
+.bvofr-metric-card { background: #0d0d0d; border: 1px solid #1a1a1a; padding: 15px; border-radius: 12px; min-height: 110px; min-width: 0; }
 .bvofr-metric-card.highlight { border-left: 4px solid #ff3e3e; }
 .m-label { font-size: 0.65rem; color: #666; font-weight: 800; text-transform: uppercase; }
 .m-value { font-size: 2.2rem; font-weight: 900; color: #fff; margin: 2px 0; }
 .m-subtext { font-size: 0.7rem; color: #444; }
-.alert-blink-status {
-    animation: statusBlink 1s infinite alternate;
-}
-@keyframes statusBlink {
-    from { color: #ffffff; }
-    to { color: #ff3e3e; text-shadow: 0 0 6px #ff3e3e; }
-}
-#count-man, #count-terrain {
-    font-size: 1rem;
-    font-weight: 800;
-    color: #ffffff;
-}
-.bvofr-metric-card.highlight .m-subtext {
-    font-size: 0.8rem;
-    color: #afafaf;
-    margin-top: 6px;
-    line-height: 1.4;
-}
+.alert-blink-status { animation: statusBlink 1s infinite alternate; }
+@keyframes statusBlink { from { color: #ffffff; } to { color: #ff3e3e; text-shadow: 0 0 6px #ff3e3e; } }
+#count-man, #count-terrain { font-size: 1rem; font-weight: 800; color: #ffffff; }
+.bvofr-metric-card.highlight .m-subtext { font-size: 0.8rem; color: #afafaf; margin-top: 6px; line-height: 1.4; }
 
 /* ESTILOS HORÁRIO */
 .bvofr-hourly-container { 
-    display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; 
-    background: #0d0d0d; padding: 10px; border-radius: 8px; border: 1px solid #1a1a1a;
-    height: 80px; align-items: flex-end;
+    display: grid; 
+    grid-template-columns: repeat(24, minmax(0, 1fr)); 
+    gap: 2px; 
+    background: #0d0d0d; 
+    padding: 10px; 
+    border-radius: 8px; 
+    border: 1px solid #1a1a1a;
+    height: 80px; 
+    align-items: flex-end;
+    min-width: 0;
 }
-.hour-box { display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; }
+.hour-box { display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; min-width: 0; }
 .hour-fill { width: 100%; background: #ff3e3e; border-radius: 1px 1px 0 0; min-height: 1px; }
 .hour-label { font-size: 0.45rem; color: #444; margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
 
@@ -86,47 +97,184 @@ body, html {
 @keyframes blinker { 50% { opacity: 0.5; } }
 .ipma-none { color: #44ff44; font-weight: 800; font-size: 0.8rem; }
 
-.bvofr-main-content { display: grid; grid-template-columns: 1.4fr 1fr; gap: 25px; }
+/* ✅ Grid principal “anti-corte” */
+.bvofr-main-content { 
+    display: grid; 
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); 
+    gap: 25px; 
+}
+.bvofr-column { min-width: 0; } /* CRUCIAL */
 .section-title { font-size: 0.75rem; font-weight: 800; color: #f9f9f9; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
 
 .bvofr-active-ofr { background: #111; border-radius: 8px; overflow: hidden; border: 1px solid #222; }
 .no-active-msg { padding: 12px; text-align: center; color: #222; font-weight: 900; font-size: 0.8rem; letter-spacing: 2px; }
-.active-item-ofr { background: #ff3e3e; color: #fff; padding: 12px; font-weight: 900; display: flex; justify-content: space-between; align-items: center; animation: alert-blink 1s infinite alternate; }
+.active-item-ofr { background: #ff3e3e; color: #fff; padding: 12px; font-weight: 900; display: flex; justify-content: space-between; align-items: center; animation: alert-blink 1s infinite alternate; min-width: 0; }
+.active-item-ofr small { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @keyframes alert-blink { from { background: #ff3e3e; } to { background: #aa0000; } }
 
-.bvofr-list-container { display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto; padding-right: 8px; }
+.bvofr-list-container { display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto; padding-right: 8px; min-width: 0; }
 .incident-item { background: #0d0d0d; border: 1px solid #1a1a1a; padding: 12px; border-radius: 8px; }
 .incident-nature { display: block; font-weight: 800; color: #fff; font-size: 0.85rem; text-transform: uppercase; }
-.incident-local { color: #ffffff; font-size: 0.75rem; font-weight: 700; display: block; margin: 2px 0; }
+.incident-local { color: #ffffff; font-size: 0.75rem; font-weight: 700; display: block; margin: 2px 0; overflow-wrap: anywhere; word-break: break-word; }
 .incident-time { color: #444; font-size: 0.65rem; font-family: 'JetBrains Mono'; }
 
 .stats-row { margin-bottom: 12px; }
-.stats-info { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 4px; color: #bbb; }
+.stats-info { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 4px; color: #bbb; gap: 10px; min-width: 0; }
+.stats-info span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .progress-bg { background: #111; height: 5px; border-radius: 3px; overflow: hidden; }
 .progress-fill { background: linear-gradient(90deg, #ff3e3e, #ff8a00); height: 100%; border-radius: 3px; }
 
-.regional-item { font-size: 0.7rem; padding: 8px 0; border-bottom: 1px solid #111; color: #c6c6c6; }
+.regional-item { font-size: 0.7rem; padding: 8px 0; border-bottom: 1px solid #111; color: #c6c6c6; overflow-wrap: anywhere; word-break: break-word; }
 .regional-item b { color: #ffffff; }
 
 .bvofr-footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid #111; font-size: 0.6rem; color: #d5d5d5; text-align: center; }
 .bvofr-list-container::-webkit-scrollbar { width: 3px; }
 .bvofr-list-container::-webkit-scrollbar-thumb { background: #222; }
 
-/* NOVA SECÇÃO MAPA */
-.bvofr-map-section { margin-top: 30px; }
+/* MAPA */
+.bvofr-map-section { margin-top: 30px; min-width: 0; }
 #bvofr-map {
-    height: 300px; /* altura menor */
-    width: 100%;   /* largura da coluna direita */
+    height: 300px;
+    width: 100%;
+    max-width: 100%;
     border-radius: 12px;
     border: 1px solid #1a1a1a;
     overflow: hidden;
 }
+.leaflet-container { max-width: 100% !important; }
+.bvofr-eredes-section { margin-top: 20px; margin-bottom: 20px; }
 
+/* CARD TOP (Barragens / Destaque) */
+.bvofr-top-card {
+    background: linear-gradient(135deg, #0d0d0d, #111);
+    border: 1px solid #1a1a1a;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    min-width: 0;
+}
+
+.top-card-left { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.top-card-kicker { font-size: 0.85rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: #ffffff; }
+.top-card-title { font-size: 1.05rem; font-weight: 900; color: #fff; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top-card-meta { font-size: 0.72rem; color: #9a9a9a; font-family: 'JetBrains Mono', monospace; }
+
+.top-card-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; min-width: 0; }
+
+.top-pill {
+    background: #0b0b0b;
+    border: 1px solid #222;
+    padding: 8px 10px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    min-width: 120px;
+    max-width: 100%;
+}
+
+.top-pill .pill-label { font-size: 0.6rem; color: #666; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+.top-pill .pill-value { font-size: 1.2rem; font-weight: 900; color: #fff; line-height: 1; }
+.top-pill .pill-sub { font-size: 0.65rem; color: #888; font-family: 'JetBrains Mono', monospace; }
+
+.top-card-btn {
+    background: #ff3e3e;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-weight: 900;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.top-card-btn:hover { filter: brightness(1.05); }
+
+/* E-REDES */
+/* Fix E-REDES em ecrãs pequenos (texto não fica "1... c...") */
+.eredes-summary{
+    gap: 10px;
+}
+
+#eredes-total{
+    min-width: 0;           /* permite flex encolher corretamente */
+    flex: 1;                /* ocupa o espaço */
+    white-space: normal;    /* deixa quebrar linha */
+    overflow: visible;      /* não cortar */
+    text-overflow: unset;   /* sem "..." */
+    line-height: 1.25;
+    word-break: break-word;
+}
+
+/* Mobile: texto em cima, botão em baixo */
+@media (max-width: 520px){
+    .eredes-summary{
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #eredes-toggle{
+        background: linear-gradient(135deg, #ff3e3e, #b02020);
+        color: #fff;
+        width: 100%;
+        text-align: center;
+        white-space: normal;   /* deixa o botão quebrar linha se precisar */
+        padding: 10px 12px;
+        font-size: 0.85rem;
+        border-radius: 10px;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+
+    }
+}
+
+#eredes-details {
+    margin-top: 10px;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.eredes-postcode { color: #fdfdfd; font-weight: 700; margin-right: 10px; }
+
+/* PROGRESS BAR BARRAGEM */
+.dam-progress {
+    width: 100%;
+    height: 5px;
+    background: #111;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 6px;
+}
+.dam-progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #ff3e3e, #ff8a00);
+    transition: width 1.2s ease;
+}
+
+/* Responsivo */
 @media (max-width: 900px) { 
     .bvofr-main-content { grid-template-columns: 1fr; } 
     .bvofr-metrics-grid { grid-template-columns: 1fr; } 
+    .bvofr-top-card { flex-direction: column; align-items: stretch; }
+    .top-card-right { justify-content: space-between; flex-wrap: wrap; }
+    .top-pill { align-items: flex-start; min-width: auto; width: 100%; }
+    .top-card-btn { width: 100%; }
+    #eredes-total { white-space: normal; } /* no mobile deixa quebrar linha */
 }
 </style>
+
 
 <!-- Leaflet -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -175,6 +323,50 @@ body, html {
         <div class="section-title">🗺️ OCORRÊNCIAS NA SUB-REGIÃO VDL</div>
         <div id="bvofr-map"></div>
     </div>
+    <div class="bvofr-eredes-section">
+    <div class="section-title">⚡️ E-REDES – Cortes de Energia (Leiria)</div>
+    
+    <div class="eredes-summary">
+        <span id="eredes-total">A verificar rede elétrica...</span>
+<button id="eredes-toggle" type="button" style="display:none;">CP AFETADOS</button>
+    </div>
+
+    <div id="eredes-details" style="display:none;"></div>
+</div>
+<!-- CARD TOP (Destaque / Barragem) -->
+<div class="bvofr-top-card" id="bvofr-top-card">
+    <div class="top-card-left">
+        <div class="top-card-kicker">📌 Barragem de Ribeiradio</div>
+        <div class="top-card-title" id="dam-name">Barragem de Ribeiradio</div>
+        <div class="top-card-meta">
+            Atualização: <span id="dam-updated">--</span>
+        </div>
+    </div>
+
+    <div class="top-card-right">
+        <div class="top-pill">
+    <div class="pill-label">Armazenamento</div>
+    <div class="pill-value" id="dam-fill">--%</div>
+    <div class="dam-progress">
+        <div class="dam-progress-fill" id="dam-progress-fill"></div>
+    </div>
+    <div class="pill-sub" id="dam-volume">--</div>
+</div>
+
+
+        <div class="top-pill">
+            <div class="pill-label">Cota</div>
+            <div class="pill-value" id="dam-level">-- m</div>
+            <div class="pill-sub" id="dam-capacity">--</div>
+        </div>
+
+        <button class="top-card-btn" id="dam-open" type="button">
+            Ver detalhes
+        </button>
+    </div>
+</div>
+
+
         </div>
 
         <div class="bvofr-column">
@@ -401,8 +593,251 @@ body, html {
             document.getElementById('bvofr-clock').innerText = new Date().toLocaleTimeString('pt-PT');
         }, 1000);
     }
+// =======================
+// E-REDES (Opendatasoft) - Leiria
+// =======================
+let eredesCache = [];
+
+const EREDES_URL =
+  "https://e-redes.opendatasoft.com/api/explore/v2.1/catalog/datasets/outages-per-geography/records?limit=100&refine=municipality%3ALeiria";
+
+// tenta extrair um código postal, independentemente do nome do campo
+function pickPostcode(r) {
+  return (
+    r.postal_code ||
+    r.postcode ||
+    r.zip_code ||
+    r.zipcode ||
+    r.zip ||
+    r["zip-code"] ||
+    r["postal-code"] ||
+    null
+  );
+}
+
+// tenta extrair nº de interrupções (se existir)
+function pickOutages(r) {
+  return (
+    r.outages ||
+    r.interruptions ||
+    r.num_outages ||
+    r.number_of_outages ||
+    r.nb_outages ||
+    r.interrupcoes ||
+    0
+  );
+}
+
+// tenta extrair clientes afetados (se existir)
+function pickCustomers(r) {
+  return (
+    r.clients ||
+    r.customers ||
+    r.affected_customers ||
+    r.customers_affected ||
+    r.clients_affected ||
+    0
+  );
+}
+
+async function fetchEredesCortes() {
+  try {
+    const targets = [
+      EREDES_URL,
+      `${PROXY}${encodeURIComponent(EREDES_URL)}`
+    ];
+
+    let json = null;
+
+    for (const url of targets) {
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) continue;
+        json = await res.json();
+        if (json) break;
+      } catch (e) {}
+    }
+
+    if (!json) throw new Error("Sem resposta do endpoint.");
+
+    eredesCache = Array.isArray(json.results) ? json.results : [];
+    updateEredesSummary();
+
+  } catch (e) {
+    document.getElementById("eredes-total").innerText = "Erro ao obter dados E-REDES";
+    document.getElementById("eredes-toggle").style.display = "none";
+    document.getElementById("eredes-details").style.display = "none";
+    console.error("E-REDES:", e);
+  }
+}
+
+function updateEredesSummary() {
+  const results = eredesCache || [];
+
+  // mapa: CP -> {outages, customers}
+  const byCP = new Map();
+
+  let totalOutages = 0;
+  let totalCustomers = 0;
+
+  results.forEach(r => {
+    const cp = pickPostcode(r);
+    if (!cp) return;
+
+    const o = parseInt(pickOutages(r) || 0, 10) || 0;
+    const c = parseInt(pickCustomers(r) || 0, 10) || 0;
+
+    totalOutages += o;
+    totalCustomers += c;
+
+    if (!byCP.has(cp)) byCP.set(cp, { outages: 0, customers: 0 });
+    const acc = byCP.get(cp);
+    acc.outages += o;
+    acc.customers += c;
+  });
+
+  const cps = [...byCP.keys()].sort();
+
+  // Se não houver CPs, diz que não há cortes (ou que não há dados)
+  if (cps.length === 0) {
+    document.getElementById("eredes-total").innerHTML = "✅ Sem códigos postais afetados (Leiria)";
+    document.getElementById("eredes-toggle").style.display = "none";
+    document.getElementById("eredes-details").style.display = "none";
+    return;
+  }
+
+  // Texto principal: TOTAL de códigos postais afetados
+  // (Se houver contadores, mostramos extra sem inventar)
+  let extra = "";
+  if (totalCustomers > 0) extra += ` · <b>${totalCustomers}</b> clientes`;
+  if (totalOutages > 0) extra += ` · <b>${totalOutages}</b> interrupções`;
+
+  document.getElementById("eredes-total").innerHTML =
+    `⚠️ <b>${cps.length}</b> cód. postais afetados (Leiria)${extra}`;
+
+  // Botão + detalhes
+  document.getElementById("eredes-toggle").style.display = "inline-block";
+
+  // Lista detalhada (chips) — inclui (outages) se existir
+  const detailsHTML = cps.map(cp => {
+    const meta = byCP.get(cp);
+    const showOut = (meta.outages > 0) ? ` <span style="opacity:.7">(${meta.outages})</span>` : "";
+    return `<span class="eredes-postcode">${cp}${showOut}</span>`;
+  }).join("");
+
+  document.getElementById("eredes-details").innerHTML = detailsHTML;
+}
+
+function toggleEredesDetails() {
+  const box = document.getElementById("eredes-details");
+  box.style.display = (box.style.display === "none") ? "block" : "none";
+}
+
+const eredesBtn = document.getElementById("eredes-toggle");
+if (eredesBtn) eredesBtn.addEventListener("click", toggleEredesDetails);
+
+
+// carregar ao abrir a página
+fetchEredesCortes();
+
+// atualizar de 5 em 5 minutos
+setInterval(fetchEredesCortes, 300000);
+
+
+// =======================
+// BARRAGEM (Ribeiradio)
+// =======================
+const DAM_URL = "https://barragens.pt/?dam_id=7554777512&nz";
+document.getElementById("dam-open").addEventListener("click", () => {
+    window.open(DAM_URL, "_blank", "noopener");
+});
+
+
+async function fetchDamRibeiradio() {
+    const targets = [
+        DAM_URL,
+        `${PROXY}${encodeURIComponent(DAM_URL)}`
+    ];
+
+    let html = null;
+
+    for (const url of targets) {
+        try {
+            const res = await fetch(url, { cache: "no-store" });
+            if (!res.ok) continue;
+            html = await res.text();
+            if (html && html.length > 500) break;
+        } catch (e) {}
+    }
+
+    if (!html) {
+        document.getElementById("dam-updated").innerText = "Erro a obter dados";
+        return;
+    }
+
+    // helper: apanha "Armazenamento a 26/1/2026: 77.9%"
+    function matchLine(re) {
+        const m = html.match(re);
+        return m ? m.slice(1) : null;
+    }
+
+    const nome = matchLine(/Albufeira:\s*([^<\n\r]+)\s*/i); // nem sempre dá, mas tentamos
+    const arm = matchLine(/Armazenamento\s+a\s+([0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4})\s*:\s*([0-9]+(?:[.,][0-9]+)?)\s*%/i);
+    const cota = matchLine(/Cota\s+a\s+([0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4})\s*:\s*([0-9]+(?:[.,][0-9]+)?)\s*m/i);
+    const capTotalDam3 = matchLine(/Capacidade\s+total\s*\(dam3\)\s*:\s*([0-9]+(?:[.,][0-9]+)?)/i);
+
+    // Atualiza nome (se vier)
+    if (nome && nome[0]) {
+        // exemplo: "Albufeira Do Ribeiradio" -> mantém, ou mete um fixo se preferires
+        document.getElementById("dam-name").innerText = nome[0].trim();
+    }
+
+    // Atualização (usa a data do Armazenamento, senão a da Cota)
+    const dataRef = (arm && arm[0]) || (cota && cota[0]) || null;
+    document.getElementById("dam-updated").innerText = dataRef ? dataRef : "--";
+
+    // % armazenamento
+    let pct = null;
+    if (arm && arm[1]) {
+        pct = parseFloat(String(arm[1]).replace(",", "."));
+        if (!isNaN(pct)) document.getElementById("dam-fill").innerText = `${pct.toFixed(1)}%`;
+        const bar = document.getElementById("dam-progress-fill");
+if (bar) bar.style.width = `${pct}%`;
+
+    }
+
+    // cota
+    if (cota && cota[1]) {
+        const level = parseFloat(String(cota[1]).replace(",", "."));
+        if (!isNaN(level)) document.getElementById("dam-level").innerText = `${level.toFixed(2)} m`;
+    }
+
+    // capacidade total e volume estimado
+    if (capTotalDam3 && capTotalDam3[0]) {
+        const dam3 = parseFloat(String(capTotalDam3[0]).replace(",", "."));
+        if (!isNaN(dam3)) {
+            const hm3Total = dam3 / 1000; // 1000 dam3 = 1 hm3
+            document.getElementById("dam-capacity").innerText = `Cap: ${hm3Total.toFixed(0)} hm³`;
+
+            if (pct !== null && !isNaN(pct)) {
+                const hm3Now = hm3Total * (pct / 100);
+                document.getElementById("dam-volume").innerText = `≈ ${hm3Now.toFixed(1)} hm³`;
+            } else {
+                document.getElementById("dam-volume").innerText = `Total: ${dam3.toFixed(0)} dam³`;
+            }
+        }
+    }
+}
+
+// carregar ao abrir a página
+fetchEredesCortes();
+
 
     start();
+    fetchDamRibeiradio();
+setInterval(fetchDamRibeiradio, 6 * 60 * 60 * 1000); // de 6 em 6 horas (basta)
+
+
+
 })();
 </script>
-
