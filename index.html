@@ -6,71 +6,7 @@ body, html {
     background: #050505; 
     overflow-x: hidden;
 }
-</style>
 
-<div class="bvofr-dashboard">
-    <div class="bvofr-header">
-        <div class="bvofr-title-group">
-            <div class="status-pulse"></div>
-            <h1>MONITORIZAÇÃO FENOMENOS METEOROLÓGICOS ADVERSOS - OPERAÇÕES PROTEÇÃO E SOCORRO <small>BOMBEIROS OLIVEIRA DE FRADES</small></h1>
-        </div>
-        <div id="bvofr-clock">00:00:00</div>
-    </div>
-
-    <div class="bvofr-metrics-grid">
-        <div class="bvofr-metric-card">
-            <span class="m-label">TOTAL ACUMULADO (DESDE 26JAN)</span>
-            <div class="m-value" id="count-total">--</div>
-            <div class="m-subtext">Ocorrências registadas em OFR</div>
-        </div>
-        <div class="bvofr-metric-card highlight">
-            <span class="m-label">ATIVAS NA SUB-REGIÃO</span>
-            <div class="m-value" id="count-active">--</div>
-            <div class="m-subtext">Viseu Dão Lafões em curso</div>
-        </div>
-        <div class="bvofr-metric-card" id="ipma-card">
-            <span class="m-label">AVISOS IPMA (VISEU)</span>
-            <div id="ipma-alerts-container" class="m-value" style="font-size: 1rem; margin-top: 10px;">
-                <span style="color: #444;">A carregar avisos...</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="bvofr-main-content">
-        <div class="bvofr-column">
-            <div class="section-title">🕒 ÚLTIMOS REGISTOS (OFR)</div>
-            <div id="list-history" class="bvofr-list-container">
-                <div class="bvofr-loading">A consultar base de dados...</div>
-            </div>
-        </div>
-
-        <div class="bvofr-column">
-            <div class="section-title">🚨 EM CURSO - OLIVEIRA DE FRADES</div>
-            <div id="active-ofr-bar" class="bvofr-active-ofr">
-                <div class="no-active-msg">NADA EM CURSO</div>
-            </div>
-
-            <div class="section-title" style="margin-top: 25px;">📊 ACUMULADO POR NATUREZA</div>
-            <div id="stats-breakdown" class="bvofr-stats-container">
-            </div>
-
-            <div class="section-title" style="margin-top: 25px;">⌛ DISTRIBUIÇÃO HORÁRIA (24H)</div>
-            <div id="hourly-breakdown" class="bvofr-hourly-container">
-                <div class="bvofr-loading">A calcular períodos...</div>
-            </div>
-
-            <div class="section-title" style="margin-top: 25px;">📡 SUB-REGIÃO (ATIVAS)</div>
-            <div id="list-active-regional" class="bvofr-active-region">
-            </div>
-        </div>
-    </div>
-
-    <div class="bvofr-footer">
-        DADOS EM TEMPO REAL VIA FOGOS.PT | ATUALIZAÇÃO AUTOMÁTICA <span id="last-sync">--</span>
-    </div>
-</div>
-
-<style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@400;700;900&display=swap');
 
 .bvofr-dashboard { 
@@ -102,8 +38,26 @@ body, html {
 .m-label { font-size: 0.65rem; color: #666; font-weight: 800; text-transform: uppercase; }
 .m-value { font-size: 2.2rem; font-weight: 900; color: #fff; margin: 2px 0; }
 .m-subtext { font-size: 0.7rem; color: #444; }
+.alert-blink-status {
+    animation: statusBlink 1s infinite alternate;
+}
+@keyframes statusBlink {
+    from { color: #ffffff; }
+    to { color: #ff3e3e; text-shadow: 0 0 6px #ff3e3e; }
+}
+#count-man, #count-terrain {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+.bvofr-metric-card.highlight .m-subtext {
+    font-size: 0.8rem;
+    color: #afafaf;
+    margin-top: 6px;
+    line-height: 1.4;
+}
 
-/* ESTILOS HORÁRIO (Mantendo a estética) */
+/* ESTILOS HORÁRIO */
 .bvofr-hourly-container { 
     display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; 
     background: #0d0d0d; padding: 10px; border-radius: 8px; border: 1px solid #1a1a1a;
@@ -130,7 +84,7 @@ body, html {
 .ipma-none { color: #44ff44; font-weight: 800; font-size: 0.8rem; }
 
 .bvofr-main-content { display: grid; grid-template-columns: 1.4fr 1fr; gap: 25px; }
-.section-title { font-size: 0.75rem; font-weight: 800; color: #444; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+.section-title { font-size: 0.75rem; font-weight: 800; color: #f9f9f9; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
 
 .bvofr-active-ofr { background: #111; border-radius: 8px; overflow: hidden; border: 1px solid #222; }
 .no-active-msg { padding: 12px; text-align: center; color: #222; font-weight: 900; font-size: 0.8rem; letter-spacing: 2px; }
@@ -148,21 +102,123 @@ body, html {
 .progress-bg { background: #111; height: 5px; border-radius: 3px; overflow: hidden; }
 .progress-fill { background: linear-gradient(90deg, #ff3e3e, #ff8a00); height: 100%; border-radius: 3px; }
 
-.regional-item { font-size: 0.7rem; padding: 8px 0; border-bottom: 1px solid #111; color: #888; }
-.regional-item b { color: #ff8a00; }
+.regional-item { font-size: 0.7rem; padding: 8px 0; border-bottom: 1px solid #111; color: #c6c6c6; }
+.regional-item b { color: #ffffff; }
 
-.bvofr-footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid #111; font-size: 0.6rem; color: #333; text-align: center; }
+.bvofr-footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid #111; font-size: 0.6rem; color: #d5d5d5; text-align: center; }
 .bvofr-list-container::-webkit-scrollbar { width: 3px; }
 .bvofr-list-container::-webkit-scrollbar-thumb { background: #222; }
 
-@media (max-width: 900px) { .bvofr-main-content { grid-template-columns: 1fr; } .bvofr-metrics-grid { grid-template-columns: 1fr; } }
+/* NOVA SECÇÃO MAPA */
+.bvofr-map-section { margin-top: 30px; }
+#bvofr-map {
+    height: 300px; /* altura menor */
+    width: 100%;   /* largura da coluna direita */
+    border-radius: 12px;
+    border: 1px solid #1a1a1a;
+    overflow: hidden;
+}
+
+@media (max-width: 900px) { 
+    .bvofr-main-content { grid-template-columns: 1fr; } 
+    .bvofr-metrics-grid { grid-template-columns: 1fr; } 
+}
 </style>
+
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<div class="bvofr-dashboard">
+    <div class="bvofr-header">
+        <div class="bvofr-title-group">
+            <div class="status-pulse"></div>
+            <h1>MONITORIZAÇÃO FENÓMENOS METEOROLÓGICOS ADVERSOS - OPERAÇÕES PROTEÇÃO E SOCORRO <small>BOMBEIROS OLIVEIRA DE FRADES</small></h1>
+        </div>
+        <div id="bvofr-clock">00:00:00</div>
+    </div>
+
+    <div class="bvofr-metrics-grid">
+        <div class="bvofr-metric-card">
+            <span class="m-label">TOTAL ACUMULADO EM OFR (DESDE 26JAN)</span>
+            <div class="m-value" id="count-total">--</div>
+            <div class="m-subtext">Ocorrências registadas em OFR</div>
+        </div>
+        <div class="bvofr-metric-card highlight">
+            <span class="m-label">ATIVAS NA SUB-REGIÃO VDL</span>
+            <div class="m-value" id="count-active">--</div>
+            <div class="m-subtext">
+                Viseu Dão Lafões em curso<br>
+                👨‍🚒 <b id="count-man">--</b> operacionais &nbsp;|&nbsp;
+                🚒 <b id="count-terrain">--</b> viaturas
+            </div>
+        </div>
+        <div class="bvofr-metric-card" id="ipma-card">
+            <span class="m-label">AVISOS IPMA (VISEU)</span>
+            <div id="ipma-alerts-container" class="m-value" style="font-size: 1rem; margin-top: 10px;">
+                <span style="color: #444;">A carregar avisos...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="bvofr-main-content">
+        <div class="bvofr-column">
+            <div class="section-title">🕒 ÚLTIMOS REGISTOS (OFR)</div>
+            <div id="list-history" class="bvofr-list-container">
+                <div class="bvofr-loading">A consultar base de dados...</div>
+            </div>
+            <!-- NOVA SECÇÃO MAPA -->
+    <div class="bvofr-map-section">
+        <div class="section-title">🗺️ OCORRÊNCIAS NA SUB-REGIÃO VDL</div>
+        <div id="bvofr-map"></div>
+    </div>
+        </div>
+
+        <div class="bvofr-column">
+            <div class="section-title">🚨 EM CURSO - OLIVEIRA DE FRADES</div>
+            <div id="active-ofr-bar" class="bvofr-active-ofr">
+                <div class="no-active-msg">NADA EM CURSO</div>
+            </div>
+
+            <div class="section-title" style="margin-top: 25px;">📊 ACUMULADO POR NATUREZA EM OFR</div>
+            <div id="stats-breakdown" class="bvofr-stats-container"></div>
+
+            <div class="section-title" style="margin-top: 25px;">⌛ DISTRIBUIÇÃO HORÁRIA OFR (24H)</div>
+            <div id="hourly-breakdown" class="bvofr-hourly-container">
+                <div class="bvofr-loading">A calcular períodos...
+                    
+                </div>
+            </div>
+            <div class="section-title" style="margin-top: 25px;">📡 SUB-REGIÃO (ATIVAS)</div>
+            <div id="list-active-regional" class="bvofr-active-region"></div>
+        </div>
+    </div>
+
+    
+
+    <div class="bvofr-footer"> DESENVOLVIDO POR HUGO L. CBV OLIVEIRA DE FRADES |
+        DADOS EM TEMPO REAL VIA FOGOS.PT | ATUALIZAÇÃO AUTOMÁTICA <span id="last-sync">--</span>
+    </div>
+</div>
 
 <script>
 (function() {
     const PROXY = "https://corsproxy.io/?";
     const CONCELHO = "Oliveira%20De%20Frades";
     const SUBREGION = "Viseu%20D%C3%A3o%20Laf%C3%B5es";
+
+    let map;
+    let markersLayer;
+
+    function initMap() {
+        map = L.map('bvofr-map').setView([40.66, -7.91], 9); // Centro do distrito de Viseu
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        markersLayer = L.layerGroup().addTo(map);
+    }
 
     async function fetchData() {
         try {
@@ -184,12 +240,51 @@ body, html {
         } catch (e) { console.error(e); }
     }
 
+    function updateMap(actives) {
+        markersLayer.clearLayers();
+
+        actives.forEach(i => {
+            const lat = parseFloat(i.lat);
+            const lng = parseFloat(i.lng);
+
+            if (!isNaN(lat) && !isNaN(lng)) {
+                const estado = i.status || i.estado || 'Em curso';
+
+                const marker = L.circleMarker([lat, lng], {
+                    radius: 8,
+                    color: '#ff3e3e',
+                    fillColor: '#ff3e3e',
+                    fillOpacity: 0.8
+                });
+
+                marker.bindPopup(`
+                    <b>${i.natureza}</b><br>
+                    📍 ${i.concelho}<br>
+                    🕒 ${i.date || '--'} ${i.hour || ''}<br>
+                    📡 ${estado}
+                `);
+
+                marker.addTo(markersLayer);
+            }
+        });
+    }
+
     function updateDashboard(history, actives, ipmaData) {
         document.getElementById('count-total').innerText = history.length;
         document.getElementById('count-active').innerText = actives.length;
+
+        let totalMan = 0;
+        let totalTerrain = 0;
+        actives.forEach(i => {
+            totalMan += parseInt(i.man || i.manpower || 0);
+            totalTerrain += parseInt(i.terrain || i.vehicles || 0);
+        });
+        document.getElementById('count-man').innerText = totalMan;
+        document.getElementById('count-terrain').innerText = totalTerrain;
+
         document.getElementById('last-sync').innerText = new Date().toLocaleTimeString('pt-PT');
 
-        // 1. IPMA
+        // IPMA
         const ipmaContainer = document.getElementById('ipma-alerts-container');
         const agora = new Date();
         const avisosViseu = ipmaData.filter(item => {
@@ -197,7 +292,6 @@ body, html {
             const fim = new Date(item.endTime);
             return item.idAreaAviso === "VIS" && agora >= inicio && agora <= fim && !item.awarenessLevelID.includes("green");
         });
-
         if (avisosViseu.length === 0) {
             ipmaContainer.innerHTML = '<span class="ipma-none">✅ SEM AVISOS ATIVOS</span>';
         } else {
@@ -212,7 +306,7 @@ body, html {
             ipmaContainer.innerHTML = html;
         }
 
-        // 2. ATIVAS OFR
+        // Ativas OFR
         const activeOFR = actives.filter(i => i.concelho.toLowerCase().includes("oliveira de frades"));
         const activeBar = document.getElementById('active-ofr-bar');
         if (activeOFR.length > 0) {
@@ -226,7 +320,7 @@ body, html {
             activeBar.innerHTML = '<div class="no-active-msg">NADA EM CURSO</div>';
         }
 
-        // 3. HISTÓRICO
+        // Histórico
         const listContainer = document.getElementById('list-history');
         const sortedHistory = history.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 15);
         listContainer.innerHTML = sortedHistory.map(i => `
@@ -237,7 +331,7 @@ body, html {
             </div>
         `).join('');
 
-        // 4. ESTATÍSTICAS NATUREZA
+        // Estatísticas natureza
         const statsContainer = document.getElementById('stats-breakdown');
         const counts = {};
         history.forEach(i => { counts[i.natureza] = (counts[i.natureza] || 0) + 1; });
@@ -250,7 +344,7 @@ body, html {
             </div>
         `).join('');
 
-        // 5. AGREGADOR HORÁRIO (Implementação fiel)
+        // Distribuição horária
         const hourlyContainer = document.getElementById('hourly-breakdown');
         const hours = new Array(24).fill(0);
         history.forEach(i => {
@@ -265,20 +359,46 @@ body, html {
             </div>
         `).join('');
 
-        // 6. REGIONAL ATIVA
+        // Regional ativa
         const regionalContainer = document.getElementById('list-active-regional');
-        regionalContainer.innerHTML = actives.length > 0 
-            ? actives.slice(0, 5).map(i => `<div class="regional-item">🚨 <b>${i.natureza}</b> : ${i.concelho}</div>`).join('')
-            : '<div class="regional-item">✅ Sem alertas.</div>';
+        if (actives.length > 0) {
+            const sortedActives = actives.sort((a, b) => {
+                const idA = parseInt(a.id || a.incidentId || 0);
+                const idB = parseInt(b.id || b.incidentId || 0);
+                return idB - idA;
+            });
+
+            regionalContainer.innerHTML = sortedActives.map(i => {
+                const estado = i.status || i.estado || 'Em curso';
+                const isAlerta = estado.toLowerCase().includes('despacho') && estado.includes('1');
+
+                return `
+                    <div class="regional-item">
+                        🚨 <b>${i.natureza}</b><br>
+                        📍 ${i.concelho}<br>
+                        🕒 ${i.date || '--'} ${i.hour || ''}<br>
+                        🧑🏻‍🚒 ${i.man} 🚒${i.terrain} - SADO ${i.id} <br>
+                        📡 Estado: <b class="${isAlerta ? 'alert-blink-status' : ''}">${estado}</b>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            regionalContainer.innerHTML = '<div class="regional-item">✅ Sem alertas.</div>';
+        }
+
+        // Atualiza o mapa
+        updateMap(actives);
     }
 
     function start() {
+        initMap();
         fetchData();
         setInterval(fetchData, 300000); 
         setInterval(() => {
             document.getElementById('bvofr-clock').innerText = new Date().toLocaleTimeString('pt-PT');
         }, 1000);
     }
+
     start();
 })();
 </script>
