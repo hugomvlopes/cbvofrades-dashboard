@@ -1,211 +1,284 @@
-<div class="dashboard-operacional">
-    <div class="dash-header">
-        <div class="header-left">
-            <span class="pulse-red"></span>
-            <h2>MONITORIZAÇÃO OPERACIONAL - OLIVEIRA DE FRADES</h2>
+<style>
+/* Reset para garantir que não há bordas brancas no Elementor ou Navegador */
+body, html { 
+    margin: 0 !important; 
+    padding: 0 !important; 
+    background: #050505; 
+    overflow-x: hidden;
+}
+</style>
+
+<div class="bvofr-dashboard">
+    <div class="bvofr-header">
+        <div class="bvofr-title-group">
+            <div class="status-pulse"></div>
+            <h1>MONITORIZAÇÃO FENOMENOS METEOROLÓGICOS ADVERSOS - OPERAÇÕES PROTEÇÃO E SOCORRO <small>BOMBEIROS OLIVEIRA DE FRADES</small></h1>
         </div>
-        <div class="header-right">
-            <span id="clock">00:00:00</span>
+        <div id="bvofr-clock">00:00:00</div>
+    </div>
+
+    <div class="bvofr-metrics-grid">
+        <div class="bvofr-metric-card">
+            <span class="m-label">TOTAL ACUMULADO (DESDE 26JAN)</span>
+            <div class="m-value" id="count-total">--</div>
+            <div class="m-subtext">Ocorrências registadas em OFR</div>
+        </div>
+        <div class="bvofr-metric-card highlight">
+            <span class="m-label">ATIVAS NA SUB-REGIÃO</span>
+            <div class="m-value" id="count-active">--</div>
+            <div class="m-subtext">Viseu Dão Lafões em curso</div>
+        </div>
+        <div class="bvofr-metric-card" id="ipma-card">
+            <span class="m-label">AVISOS IPMA (VISEU)</span>
+            <div id="ipma-alerts-container" class="m-value" style="font-size: 1rem; margin-top: 10px;">
+                <span style="color: #444;">A carregar avisos...</span>
+            </div>
         </div>
     </div>
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <span class="stat-label">TOTAL NO CONCELHO (Desde 21 Jan)</span>
-            <div class="stat-row">
-                <span id="total-ocorrencias" class="stat-value">--</span>
-                <div id="natureza-breakdown" class="breakdown-list"></div>
+    <div class="bvofr-main-content">
+        <div class="bvofr-column">
+            <div class="section-title">🕒 ÚLTIMOS REGISTOS (OFR)</div>
+            <div id="list-history" class="bvofr-list-container">
+                <div class="bvofr-loading">A consultar base de dados...</div>
             </div>
         </div>
 
-        <div class="stat-card warning-card">
-            <span class="stat-label">AVISOS IPMA ATIVOS AGORA (VISEU)</span>
-            <div id="viseu-alerts-container">
-                <span class="loading-text">A filtrar avisos em vigor...</span>
+        <div class="bvofr-column">
+            <div class="section-title">🚨 EM CURSO - OLIVEIRA DE FRADES</div>
+            <div id="active-ofr-bar" class="bvofr-active-ofr">
+                <div class="no-active-msg">NADA EM CURSO</div>
+            </div>
+
+            <div class="section-title" style="margin-top: 25px;">📊 ACUMULADO POR NATUREZA</div>
+            <div id="stats-breakdown" class="bvofr-stats-container">
+            </div>
+
+            <div class="section-title" style="margin-top: 25px;">⌛ DISTRIBUIÇÃO HORÁRIA (24H)</div>
+            <div id="hourly-breakdown" class="bvofr-hourly-container">
+                <div class="bvofr-loading">A calcular períodos...</div>
+            </div>
+
+            <div class="section-title" style="margin-top: 25px;">📡 SUB-REGIÃO (ATIVAS)</div>
+            <div id="list-active-regional" class="bvofr-active-region">
             </div>
         </div>
     </div>
 
-    <div class="ticker-wrapper">
-        <div class="stat-card ticker-card">
-            <span class="stat-label">ALERTAS ATIVOS (REGIÃO VISEU DÃO LAFÕES)</span>
-            <div id="ocorrencias-ticker">
-                <span class="loading-text">🚒 A carregar dados...</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="camera-grid">
-        <div class="cam-container"><img id="cam1" src="" alt="Ladário"><div class="cam-label">Ladário</div></div>
-        <div class="cam-container"><img id="cam2" src="" alt="Paranho Arca"><div class="cam-label">Paranho Arca</div></div>
-        <div class="cam-container"><img id="cam3" src="" alt="Gravia"><div class="cam-label">Gravia</div></div>
-        <div class="cam-container"><img id="cam4" src="" alt="Adsamo"><div class="cam-label">Adsamo</div></div>
-    </div>
-
-    <div class="weather-row">
-        <div class="radar-box">
-            <div class="sub-title">📡 RADAR IPMA (AROUCA / P. GRALHEIRO)</div>
-            <img id="radar-ipma" src="https://www.ipma.pt/resources.www/transf/radar/LIS_MAX.gif" alt="Radar IPMA">
-        </div>
-        <div class="windy-box">
-            <div class="sub-title">🌬️ DINÂMICA DE VENTOS E NEVE</div>
-            <iframe width="100%" height="350" src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=°C&metricWind=km/h&zoom=9&overlay=wind&product=ecmwf&level=surface&lat=40.748&lon=-8.053&detailLat=40.732&detailLon=-8.253&marker=true" frameborder="0"></iframe>
-        </div>
+    <div class="bvofr-footer">
+        DADOS EM TEMPO REAL VIA FOGOS.PT | ATUALIZAÇÃO AUTOMÁTICA <span id="last-sync">--</span>
     </div>
 </div>
 
 <style>
-.dashboard-operacional { background: #0a0a0a; padding: 20px; border-radius: 12px; font-family: 'Inter', sans-serif; color: #fff; border: 1px solid #222; }
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@400;700;900&display=swap');
 
-/* FIX ALINHAMENTO BOLA */
-.dash-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 12px; margin-bottom: 15px; }
-.header-left { display: flex; align-items: center; }
-
-.pulse-red { 
-    width: 12px; 
-    height: 12px; 
-    background: #ff0000; 
-    border-radius: 50% !important; 
-    margin-right: 12px; 
-    display: inline-block; 
-    flex-shrink: 0; /* Impede a deformação */
-    box-shadow: 0 0 10px #ff0000; 
-    animation: pulse-animation 1.5s infinite; 
+.bvofr-dashboard { 
+    background: #050505; 
+    color: #e0e0e0; 
+    font-family: 'Outfit', sans-serif; 
+    padding: 25px; 
+    border-radius: 0;
+    border: none;
+    width: 100vw;
+    min-height: 100vh;
+    margin: 0;
+    line-height: 1.4; 
+    box-sizing: border-box;
 }
 
-@keyframes pulse-animation { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); } }
+.bvofr-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #111; padding-bottom: 20px; margin-bottom: 25px; }
+.bvofr-title-group { display: flex; align-items: center; gap: 15px; }
+.bvofr-header h1 { margin: 0; font-size: 1.1rem; font-weight: 900; color: #fff; letter-spacing: 1px; }
+.bvofr-header h1 small { display: block; color: #ff3e3e; font-size: 0.75rem; }
+#bvofr-clock { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; color: #ff0000; }
 
-.dash-header h2 { font-size: 0.9rem; margin: 0; color: #eee; font-weight: 700; letter-spacing: 1px; }
-#clock { font-family: 'Courier New', monospace; font-size: 1.1rem; color: #00d4ff; font-weight: bold; }
+.status-pulse { width: 12px; height: 12px; background: #ff3e3e; border-radius: 50%; box-shadow: 0 0 10px #ff3e3e; animation: bvofrPulse 2s infinite; }
+@keyframes bvofrPulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-/* AJUSTE STATS PARA OCUPAR MENOS ESPAÇO VERTICAL */
-.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 12px; }
-.stat-card { background: #151515; padding: 15px; border-radius: 8px; border: 1px solid #222; }
-.stat-label { font-size: 0.7rem; color: #777; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; display: block; }
+.bvofr-metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
+.bvofr-metric-card { background: #0d0d0d; border: 1px solid #1a1a1a; padding: 15px; border-radius: 12px; min-height: 110px; }
+.bvofr-metric-card.highlight { border-left: 4px solid #ff3e3e; }
+.m-label { font-size: 0.65rem; color: #666; font-weight: 800; text-transform: uppercase; }
+.m-value { font-size: 2.2rem; font-weight: 900; color: #fff; margin: 2px 0; }
+.m-subtext { font-size: 0.7rem; color: #444; }
 
-.stat-row { 
+/* ESTILOS HORÁRIO (Mantendo a estética) */
+.bvofr-hourly-container { 
+    display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; 
+    background: #0d0d0d; padding: 10px; border-radius: 8px; border: 1px solid #1a1a1a;
+    height: 80px; align-items: flex-end;
+}
+.hour-box { display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; }
+.hour-fill { width: 100%; background: #ff3e3e; border-radius: 1px 1px 0 0; min-height: 1px; }
+.hour-label { font-size: 0.45rem; color: #444; margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
+
+.ipma-badge { 
     display: flex; 
-    align-items: center; 
-    justify-content: flex-start; 
-    gap: 20px; /* Espaço entre o número e a lista */
+    justify-content: space-between; 
+    padding: 5px 10px; 
+    border-radius: 4px; 
+    font-size: 0.75rem; 
+    font-weight: 900; 
+    margin-bottom: 5px;
+    text-transform: uppercase;
 }
-
-.stat-value { font-size: 2.5rem; color: #ff4d4d; font-weight: 900; line-height: 1; }
-
-.breakdown-list { 
-    flex-grow: 1; 
-    display: flex; 
-    flex-direction: column; 
-    gap: 4px; 
-    border-left: 1px solid #333; 
-    padding-left: 15px; 
-}
-
-.breakdown-item { font-size: 0.7rem; color: #bbb; display: flex; justify-content: space-between; gap: 10px; }
-.breakdown-count { color: #00d4ff; font-weight: bold; }
-
-/* RESTANTE DOS ESTILOS */
-#viseu-alerts-container { display: flex; flex-direction: column; gap: 5px; }
-.ipma-badge { padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; display: flex; justify-content: space-between; }
-.level-yellow { background: #ffcc00; color: #000; }
-.level-orange { background: #ff6600; color: #fff; }
-.level-red { background: #cc0000; color: #fff; animation: blinker 1.5s linear infinite; }
+.ipma-yellow { background: #ffcc00; color: #000; }
+.ipma-orange { background: #ff6600; color: #fff; }
+.ipma-red { background: #cc0000; color: #fff; animation: blinker 1.5s linear infinite; }
 @keyframes blinker { 50% { opacity: 0.5; } }
-.no-alerts { color: #44ff44; font-size: 0.8rem; font-weight: 800; }
-#ocorrencias-ticker { height: 30px; display: flex; align-items: center; color: #ffffff; font-weight: 600; font-size: 14px; }
-.camera-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
-.cam-container { position: relative; background: #000; border-radius: 4px; overflow: hidden; border: 1px solid #222; }
-.cam-container img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
-.cam-label { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.8); padding: 4px; font-size: 0.65rem; color: #00d4ff; text-align: center; font-weight: bold; }
-.weather-row { display: grid; grid-template-columns: 1fr 1.5fr; gap: 15px; }
-.sub-title { font-size: 0.75rem; margin-bottom: 8px; color: #555; font-weight: bold; text-transform: uppercase; }
-.radar-box img { width: 100%; border-radius: 6px; height: 350px; object-fit: contain; background: #000; border: 1px solid #222; }
-.windy-box iframe { border-radius: 8px; border: 1px solid #222; }
-@media (max-width: 800px) { .stats-grid, .camera-grid, .weather-row { grid-template-columns: 1fr; } .radar-box img { height: 250px; } .stat-row { flex-direction: column; align-items: flex-start; } .breakdown-list { border-left: none; padding-left: 0; border-top: 1px solid #333; padding-top: 10px; width: 100%; } }
+.ipma-none { color: #44ff44; font-weight: 800; font-size: 0.8rem; }
+
+.bvofr-main-content { display: grid; grid-template-columns: 1.4fr 1fr; gap: 25px; }
+.section-title { font-size: 0.75rem; font-weight: 800; color: #444; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+
+.bvofr-active-ofr { background: #111; border-radius: 8px; overflow: hidden; border: 1px solid #222; }
+.no-active-msg { padding: 12px; text-align: center; color: #222; font-weight: 900; font-size: 0.8rem; letter-spacing: 2px; }
+.active-item-ofr { background: #ff3e3e; color: #fff; padding: 12px; font-weight: 900; display: flex; justify-content: space-between; align-items: center; animation: alert-blink 1s infinite alternate; }
+@keyframes alert-blink { from { background: #ff3e3e; } to { background: #aa0000; } }
+
+.bvofr-list-container { display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto; padding-right: 8px; }
+.incident-item { background: #0d0d0d; border: 1px solid #1a1a1a; padding: 12px; border-radius: 8px; }
+.incident-nature { display: block; font-weight: 800; color: #fff; font-size: 0.85rem; text-transform: uppercase; }
+.incident-local { color: #ffffff; font-size: 0.75rem; font-weight: 700; display: block; margin: 2px 0; }
+.incident-time { color: #444; font-size: 0.65rem; font-family: 'JetBrains Mono'; }
+
+.stats-row { margin-bottom: 12px; }
+.stats-info { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 4px; color: #bbb; }
+.progress-bg { background: #111; height: 5px; border-radius: 3px; overflow: hidden; }
+.progress-fill { background: linear-gradient(90deg, #ff3e3e, #ff8a00); height: 100%; border-radius: 3px; }
+
+.regional-item { font-size: 0.7rem; padding: 8px 0; border-bottom: 1px solid #111; color: #888; }
+.regional-item b { color: #ff8a00; }
+
+.bvofr-footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid #111; font-size: 0.6rem; color: #333; text-align: center; }
+.bvofr-list-container::-webkit-scrollbar { width: 3px; }
+.bvofr-list-container::-webkit-scrollbar-thumb { background: #222; }
+
+@media (max-width: 900px) { .bvofr-main-content { grid-template-columns: 1fr; } .bvofr-metrics-grid { grid-template-columns: 1fr; } }
 </style>
 
 <script>
-// Mantive a tua lógica de script que já estava a funcionar bem
-async function atualizarIPMA() {
-    try {
-        const url = "https://corsproxy.io/?https://api.ipma.pt/open-data/forecast/warnings/warnings_www.json";
-        const res = await fetch(url);
-        const data = await res.json();
-        const agora = new Date();
+(function() {
+    const PROXY = "https://corsproxy.io/?";
+    const CONCELHO = "Oliveira%20De%20Frades";
+    const SUBREGION = "Viseu%20D%C3%A3o%20Laf%C3%B5es";
 
-        const ativos = data.filter(item => {
+    async function fetchData() {
+        try {
+            const hUrl = `${PROXY}https://api.fogos.pt/v2/incidents/search?all=1&after=2026-01-26&concelho=${CONCELHO}`;
+            const hRes = await fetch(hUrl);
+            const hData = await hRes.json();
+            const incidents = Array.isArray(hData) ? hData : hData.data || [];
+
+            const aUrl = `${PROXY}https://api.fogos.pt/v2/incidents/active?all=1&subRegion=${SUBREGION}`;
+            const aRes = await fetch(aUrl);
+            const aData = await aRes.json();
+            const actives = Array.isArray(aData) ? aData : aData.data || [];
+
+            const ipmaUrl = `${PROXY}https://api.ipma.pt/open-data/forecast/warnings/warnings_www.json`;
+            const ipmaRes = await fetch(ipmaUrl);
+            const ipmaData = await ipmaRes.json();
+
+            updateDashboard(incidents, actives, ipmaData);
+        } catch (e) { console.error(e); }
+    }
+
+    function updateDashboard(history, actives, ipmaData) {
+        document.getElementById('count-total').innerText = history.length;
+        document.getElementById('count-active').innerText = actives.length;
+        document.getElementById('last-sync').innerText = new Date().toLocaleTimeString('pt-PT');
+
+        // 1. IPMA
+        const ipmaContainer = document.getElementById('ipma-alerts-container');
+        const agora = new Date();
+        const avisosViseu = ipmaData.filter(item => {
             const inicio = new Date(item.startTime);
             const fim = new Date(item.endTime);
-            const level = item.awarenessLevelID.toLowerCase();
-            return item.idAreaAviso === "VIS" && agora >= inicio && agora <= fim && !level.includes("green") && !level.includes("no_warning");
+            return item.idAreaAviso === "VIS" && agora >= inicio && agora <= fim && !item.awarenessLevelID.includes("green");
         });
 
-        const container = document.getElementById("viseu-alerts-container");
-        if (ativos.length === 0) {
-            container.innerHTML = '<span class="no-alerts">✅ SEM AVISOS ATIVOS NESTE MOMENTO</span>';
-            return;
-        }
-
-        let html = "";
-        ativos.forEach(alert => {
-            const level = alert.awarenessLevelID.toLowerCase();
-            let levelClass = "level-yellow";
-            if(level.includes("orange")) levelClass = "level-orange";
-            if(level.includes("red")) levelClass = "level-red";
-            const labelNivel = alert.awarenessLevelID.includes('_') ? alert.awarenessLevelID.split('_')[1] : "AVISO";
-            html += `<div class="ipma-badge ${levelClass}"><span>${alert.awarenessTypeName}</span><span>${labelNivel}</span></div>`;
-        });
-        container.innerHTML = html;
-    } catch (e) { console.error("Erro IPMA:", e); }
-}
-
-async function atualizarOcorrencias() {
-    try {
-        const hRes = await fetch("https://corsproxy.io/?https://api.fogos.pt/v2/incidents/search?all=1&after=2026-01-21&concelho=Oliveira%20De%20Frades&limit=1000");
-        const hJson = await hRes.json();
-        const hIncidentes = Array.isArray(hJson) ? hJson : hJson.data || [];
-        document.getElementById('total-ocorrencias').innerText = hIncidentes.length;
-
-        const contagem = {};
-        hIncidentes.forEach(i => { contagem[i.natureza || "Outros"] = (contagem[i.natureza || "Outros"] || 0) + 1; });
-        const ordenado = Object.entries(contagem).sort((a,b) => b[1] - a[1]).slice(0, 3);
-        let hHtml = "";
-        ordenado.forEach(([tipo, qtd]) => { hHtml += `<div class="breakdown-item"><span>${tipo}</span><span class="breakdown-count">${qtd}</span></div>`; });
-        document.getElementById('natureza-breakdown').innerHTML = hHtml;
-
-        const aRes = await fetch("https://corsproxy.io/?https://api.fogos.pt/v2/incidents/active?all=1&subRegion=Viseu%20D%C3%A3o%20Laf%C3%B5es");
-        const aJson = await aRes.json();
-        const aIncidentes = Array.isArray(aJson) ? aJson : aJson.data || [];
-        if (aIncidentes.length === 0) {
-            document.getElementById("ocorrencias-ticker").innerHTML = "✅ SEM OCORRÊNCIAS REGIONAIS ATIVAS";
-            document.getElementById("ocorrencias-ticker").style.color = "#44ff44";
+        if (avisosViseu.length === 0) {
+            ipmaContainer.innerHTML = '<span class="ipma-none">✅ SEM AVISOS ATIVOS</span>';
         } else {
-            let txt = "";
-            aIncidentes.forEach(i => { txt += `🚨 ${i.natureza.toUpperCase()} : ${i.location.toUpperCase()} &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; `; });
-            document.getElementById("ocorrencias-ticker").innerHTML = `<marquee scrollamount="8">${txt}</marquee>`;
-            document.getElementById("ocorrencias-ticker").style.color = "#ffffff";
+            let html = "";
+            avisosViseu.forEach(a => {
+                let cl = "ipma-yellow";
+                if(a.awarenessLevelID.includes("orange")) cl = "ipma-orange";
+                if(a.awarenessLevelID.includes("red")) cl = "ipma-red";
+                const nivelTexto = a.awarenessLevelID.includes('_') ? a.awarenessLevelID.split('_')[1] : "";
+                html += `<div class="ipma-badge ${cl}"><span>${a.awarenessTypeName}</span><span>${nivelTexto}</span></div>`;
+            });
+            ipmaContainer.innerHTML = html;
         }
-    } catch (e) { }
-}
 
-function refreshMedia() {
-    const t = new Date().getTime();
-    const cams = ["15_1", "16_1", "12_1", "17_1"];
-    for(let i=1; i<=4; i++) {
-        let el = document.getElementById('cam'+i);
-        if(el) el.src = `https://vigia.cimvdl.pt/assets/img/vigia/cache/camera_${cams[i-1]}.jpg?t=${t}`;
+        // 2. ATIVAS OFR
+        const activeOFR = actives.filter(i => i.concelho.toLowerCase().includes("oliveira de frades"));
+        const activeBar = document.getElementById('active-ofr-bar');
+        if (activeOFR.length > 0) {
+            activeBar.innerHTML = activeOFR.map(i => `
+                <div class="active-item-ofr">
+                    <span>🚨 ${i.natureza.toUpperCase()}</span>
+                    <small>${i.location.split(' - ')[0]}</small>
+                </div>
+            `).join('');
+        } else {
+            activeBar.innerHTML = '<div class="no-active-msg">NADA EM CURSO</div>';
+        }
+
+        // 3. HISTÓRICO
+        const listContainer = document.getElementById('list-history');
+        const sortedHistory = history.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 15);
+        listContainer.innerHTML = sortedHistory.map(i => `
+            <div class="incident-item">
+                <span class="incident-nature">${i.natureza}</span>
+                <span class="incident-local">📍 ${i.location}</span>
+                <span class="incident-time">🕒 ${i.date} às ${i.hour}</span>
+            </div>
+        `).join('');
+
+        // 4. ESTATÍSTICAS NATUREZA
+        const statsContainer = document.getElementById('stats-breakdown');
+        const counts = {};
+        history.forEach(i => { counts[i.natureza] = (counts[i.natureza] || 0) + 1; });
+        const sortedStats = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        const max = sortedStats[0]?.[1] || 1;
+        statsContainer.innerHTML = sortedStats.map(([type, val]) => `
+            <div class="stats-row">
+                <div class="stats-info"><span>${type}</span><b>${val}</b></div>
+                <div class="progress-bg"><div class="progress-fill" style="width: ${(val/max)*100}%"></div></div>
+            </div>
+        `).join('');
+
+        // 5. AGREGADOR HORÁRIO (Implementação fiel)
+        const hourlyContainer = document.getElementById('hourly-breakdown');
+        const hours = new Array(24).fill(0);
+        history.forEach(i => {
+            const h = parseInt(i.hour.split(':')[0]);
+            if (!isNaN(h)) hours[h]++;
+        });
+        const maxH = Math.max(...hours) || 1;
+        hourlyContainer.innerHTML = hours.map((v, i) => `
+            <div class="hour-box" title="${i}h: ${v} ocorrências">
+                <div class="hour-fill" style="height: ${(v/maxH)*100}%"></div>
+                <span class="hour-label">${i}h</span>
+            </div>
+        `).join('');
+
+        // 6. REGIONAL ATIVA
+        const regionalContainer = document.getElementById('list-active-regional');
+        regionalContainer.innerHTML = actives.length > 0 
+            ? actives.slice(0, 5).map(i => `<div class="regional-item">🚨 <b>${i.natureza}</b> : ${i.concelho}</div>`).join('')
+            : '<div class="regional-item">✅ Sem alertas.</div>';
     }
-}
 
-function updateClock() {
-    const el = document.getElementById('clock');
-    if(el) el.innerText = new Date().toLocaleTimeString('pt-PT');
-}
-
-atualizarIPMA();
-atualizarOcorrencias();
-setInterval(atualizarIPMA, 600000); 
-setInterval(atualizarOcorrencias, 300000); 
-setInterval(refreshMedia, 1500); 
-setInterval(updateClock, 1000);
+    function start() {
+        fetchData();
+        setInterval(fetchData, 300000); 
+        setInterval(() => {
+            document.getElementById('bvofr-clock').innerText = new Date().toLocaleTimeString('pt-PT');
+        }, 1000);
+    }
+    start();
+})();
 </script>
